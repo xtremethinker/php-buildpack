@@ -54,4 +54,20 @@ if __name__ == '__main__':
         .create_start_script()
             .using_process_manager()
             .write())
+    print ''
+    print '--------------------------------------------------------'
+    print '|                     WARNING                          |'
+    print '--------------------------------------------------------'
+    print '|                                                      |'
+    print '|          THIS VERSION HAS BEEN DEPRECATED.           |'
+    print '|                                                      |'
+    print '|             IT HAS BEEN REPLACED BY:                 |'
+    print '|                    Version 1.3                       |'
+    print '|                                                      |'
+    print '|                 PLEASE UPGRADE!!                     |'
+    print '|                                                      |'
+    print '|     THIS VERSION MAY OR MAY NOT CONTINUE TO WORK!    |'
+    print '|                                                      |'
+    print '--------------------------------------------------------'
+    print ''
     print 'Finished: [%s]' % datetime.now()
