@@ -115,11 +115,11 @@ def run():
     zipup = subparsers.add_parser('zip',
                                   help='Build a zip file of the build pack and'
                                        ' its binary files.')
-    zg = zipup.add_mutually_exclusive_group(required=True)
-    zg.add_argument('--binary-path',
+    # zg = zipup.add_mutually_exclusive_group(required=True)
+    zipup.add_argument('--binary-path',
                     help='Path to existing binaries.  Must specify this or'
                          '--index.')
-    zg.add_argument('--index',
+    zipup.add_argument('--index',
                     help='Override the location for the download index. '
                          'Defaults to <binary-path>/index-latest.json.'
                          'Must specify this or --binary-path.')
@@ -254,18 +254,18 @@ def download_version(verPath, urls):
     for thread in threads:
         thread.join()
 
-
-def download(url, toPath):
-    try:
-        res = urllib2.urlopen(url)
-        print 'Downloaded [%s] to [%s]' % (url, toPath)
-        with open(toPath, 'w') as f:
-            f.write(res.read())
-    except IOError, e:
-        if e.code == 404:
-            print 'Failed [%s] not found.' % url
-        else:
-            print 'Failed [%s] [%s] [%s].' % (url, e.code, e.reason)
+def download(url, toPath, cache=True):
+    if not cache or not os.path.exists(toPath):
+        try:
+            res = urllib2.urlopen(url)
+            print 'Downloaded [%s] to [%s]' % (url, toPath)
+            with open(toPath, 'w') as f:
+                f.write(res.read())
+        except IOError, e:
+            if e.code == 404:
+                print 'Failed [%s] not found.' % url
+            else:
+                print 'Failed [%s] [%s] [%s].' % (url, e.code, e.reason)
 
 
 def safe_makedirs(path):
