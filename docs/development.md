@@ -9,6 +9,18 @@ To get setup developing the build pack, you'll need some tools.  Here's the setu
  1. [PyEnv] - This will allow you to easily install Python 2.6.6, which is the same version available through the staging environment of CloudFoundry.
  1. [virtualenv] & [pip] - The build pack uses virtualenv and pip to setup the [required packages].  These are used by the unit test and not required by the build pack itself.
 
+#### Mac OSX installation instructions
+
+```sh
+brew install pyenv pyenv-virtualenv pyenv-pip-rehash
+bash-it enable plugin pyenv
+git clone https://github.com/dmikusa-pivotal/cf-php-build-pack
+cd cf-php-build-pack
+pyenv virtualenv 2.6.6 php-buildpack
+pyenv activate php-buildpack
+pip install -r requirements.txt
+```
+
 With those tools installed, you should be able to run these commands to get up and running.
 
 ```bash
