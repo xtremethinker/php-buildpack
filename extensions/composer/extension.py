@@ -43,7 +43,6 @@ DEFAULTS = {
     'COMPOSER_CACHE_DIR': '{CACHE_DIR}/composer'
 }
 
-
 class ComposerTool(object):
     def __init__(self, builder):
         self._log = _log
@@ -114,6 +113,18 @@ class ComposerTool(object):
         return selected
 
     @staticmethod
+    def read_hhvm_version_from_composer_json(path):
+        composer_json = json.load(open(path, 'r'))
+        require = composer_json.get('require', {})
+        return require.get('hhvm', None)
+
+    @staticmethod
+    def read_hhvm_version_from_composer_lock(path):
+        composer_json = json.load(open(path, 'r'))
+        platform = composer_json.get('platform', {})
+        return platform.get('hhvm', None)
+
+    @staticmethod
     def configure(ctx):
         exts = []
         # include any existing extensions
@@ -129,16 +140,25 @@ class ComposerTool(object):
             exts.extend(ComposerTool.read_exts_from_path(lock_path))
         # update context with new list of extensions, if composer.json exists
         if json_path or lock_path:
+            print('JSON %s' % [json_path])
+            print('LOCK %s' % [lock_path])
             if json_path:
-                php_version = \
-                    ComposerTool.read_php_version_from_composer_json(json_path)
+                php_version = ComposerTool.read_php_version_from_composer_json(json_path)
+                hhvm_version = ComposerTool.read_hhvm_version_from_composer_json(json_path)
             else:
-                php_version = \
-                    ComposerTool.read_php_version_from_composer_lock(lock_path)
-            _log.debug('Composer picked PHP Version [%s]', php_version)
-            ctx['PHP_VERSION'] = ComposerTool.pick_php_version(ctx,
-                                                               php_version)
-            ctx['PHP_EXTENSIONS'] = utils.unique(exts)
+                php_version = ComposerTool.read_php_version_from_composer_lock(lock_path)
+                hhvm_version = ComposerTool.read_hhvm_version_from_composer_lock(lock_path)
+            if hhvm_version:
+                _log.warning('Composer picked HHVM Version [%s]', ctx['HHVM_VERSION'])
+                print('Composer picked HHVM Version [%s]' % [ctx['HHVM_VERSION']])
+                ctx['PHP_VM'] = 'hhvm'
+            else:
+                _log.debug('Composer picked PHP Version [%s]', php_version)
+                print('Composer picked PHP Version [%s]' % [php_version])
+                ctx['PHP_VERSION'] = ComposerTool.pick_php_version(ctx,
+                                                                   php_version)
+                ctx['PHP_EXTENSIONS'] = utils.unique(exts)
+                ctx['PHP_VM'] = 'php'
 
     def detect(self):
         (json_path, lock_path) = \
@@ -146,7 +166,11 @@ class ComposerTool(object):
         return (json_path is not None or lock_path is not None)
 
     def install(self):
-        self._builder.install().modules('PHP').include_module('cli').done()
+        print('INSTALLING')
+        if 'PHP_VM' in self._ctx and self._ctx['PHP_VM'] == 'hhvm':
+            self._builder.install().modules('HHVM').include_module('cli').done()
+        else:
+            self._builder.install().modules('PHP').include_module('cli').done()
         self._builder.install()._installer.install_binary_direct(
             self._ctx['COMPOSER_DOWNLOAD_URL'],
             self._ctx['COMPOSER_HASH_URL'],

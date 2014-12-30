@@ -50,6 +50,7 @@ def service_environment(ctx):
 
 def compile(install):
     print 'Installing HHVM'
+    print 'HHVM %s' % (ctx['HHVM_VERSION'])
     # install HHVM & config
     (install
         .package('HHVM')

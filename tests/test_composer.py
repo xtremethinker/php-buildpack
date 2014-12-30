@@ -222,6 +222,7 @@ class TestComposer(object):
         assert 'fileinfo' == ctx['PHP_EXTENSIONS'][2]
         assert 'gd' == ctx['PHP_EXTENSIONS'][3]
         assert '5.4.31' == ctx['PHP_VERSION']
+        assert 'php' == ctx['PHP_VM']
         ctx = utils.FormattedDict({
             'BUILD_DIR': 'tests/data/composer',
             'PHP_EXTENSIONS': ['a', 'b'],
@@ -238,6 +239,7 @@ class TestComposer(object):
         assert 'fileinfo' == ctx['PHP_EXTENSIONS'][4]
         assert 'gd' == ctx['PHP_EXTENSIONS'][5]
         assert '5.4.31' == ctx['PHP_VERSION']
+        assert 'php' == ctx['PHP_VM']
 
     def test_configure_composer_without_php_version(self):
         ctx = utils.FormattedDict({
@@ -252,6 +254,16 @@ class TestComposer(object):
         assert 'zip' == ctx['PHP_EXTENSIONS'][1]
         assert 'fileinfo' == ctx['PHP_EXTENSIONS'][2]
         assert '5.4.31' == ctx['PHP_VERSION']
+        assert 'php' == ctx['PHP_VM']
+
+    def test_configure_compose_with_hhvm_version(self):
+        ctx = utils.FormattedDict({
+            'BUILD_DIR': 'tests/data/composer-with-hhvm',
+            'HHVM_VERSION': '3.2.0'
+        })
+        self.ct.ComposerTool.configure(ctx)
+        assert 'hhvm' == ctx['PHP_VM']
+        assert '3.2.0' == ctx['HHVM_VERSION']
 
     def test_configure_no_composer(self):
         ctx = utils.FormattedDict({
