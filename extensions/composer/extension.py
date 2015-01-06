@@ -158,21 +158,8 @@ class ComposerExtension(ExtensionHelper):
 
     def _compile(self, install):
         self._builder = install.builder
-        self.move_local_vendor_folder()
         self.install()
         self.run()
-
-    def move_local_vendor_folder(self):
-        vendor_path = os.path.join(self._ctx['BUILD_DIR'],
-                                   self._ctx['WEBDIR'],
-                                   'vendor')
-        if os.path.exists(vendor_path):
-            self._log.debug("Vendor [%s] exists, moving to LIBDIR", vendor_path)
-            (self._builder.move()
-                .under('{BUILD_DIR}/{WEBDIR}')
-                .into('{BUILD_DIR}/{LIBDIR}')
-                .where_name_matches('^%s/.*$' % vendor_path)
-                .done())
 
     def install(self):
         self._builder.install().modules('PHP').include_module('cli').done()
@@ -184,25 +171,6 @@ class ComposerExtension(ExtensionHelper):
 
     def run(self):
         # Move composer files out of WEBDIR
-        (self._builder.move()
-            .under('{BUILD_DIR}/{WEBDIR}')
-            .where_name_is('composer.json')
-            .into('BUILD_DIR')
-         .done())
-        (self._builder.move()
-            .under('{BUILD_DIR}/{WEBDIR}')
-            .where_name_is('composer.lock')
-            .into('BUILD_DIR')
-         .done())
-        # Sanity Checks
-        if not os.path.exists(os.path.join(self._ctx['BUILD_DIR'],
-                                           'composer.lock')):
-            msg = (
-                'PROTIP: Include a `composer.lock` file with your '
-                'application! This will make sure the exact same version '
-                'of dependencies are used when you deploy to CloudFoundry.')
-            self._log.warning(msg)
-            print msg
         self.composer_strategy.write_config(self._builder)
         # Run from /tmp/staged/app
         try:
@@ -214,10 +182,11 @@ class ComposerExtension(ExtensionHelper):
                 'LD_LIBRARY_PATH': os.path.join(self._ctx['BUILD_DIR'],
                                                 'php', 'lib'),
                 'HOME': self._ctx['BUILD_DIR'],
-                'COMPOSER_VENDOR_DIR': self._ctx['COMPOSER_VENDOR_DIR'],
+                # 'COMPOSER_VENDOR_DIR': self._ctx['COMPOSER_VENDOR_DIR'],
                 'COMPOSER_BIN_DIR': self._ctx['COMPOSER_BIN_DIR'],
                 'COMPOSER_CACHE_DIR': self._ctx['COMPOSER_CACHE_DIR']
             }
+            self._log.debug("---- COMPOSER ENV: %s" % composerEnv)
             composerCmd = [phpPath,
                            '-c "%s"' % phpCfg,
                            composerPath,
@@ -225,10 +194,11 @@ class ComposerExtension(ExtensionHelper):
                            '--no-progress']
             composerCmd.extend(self._ctx['COMPOSER_INSTALL_OPTIONS'])
             self._log.debug("Running [%s]", ' '.join(composerCmd))
+            self._log.debug("\n".join(os.listdir(os.path.join(self._ctx['BUILD_DIR'], self._ctx['WEBDIR']))))
             output = stream_output(sys.stdout,
                                    ' '.join(composerCmd),
                                    env=composerEnv,
-                                   cwd=self._ctx['BUILD_DIR'],
+                                   cwd=os.path.join(self._ctx['BUILD_DIR'], self._ctx['WEBDIR']),
                                    shell=True)
             _log.debug('composer output [%s]', output)
         except Exception as e:

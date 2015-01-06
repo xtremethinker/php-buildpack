@@ -21,9 +21,6 @@
       "wordpress": "3.8",
       "fancyguy/webroot-installer": "1.0.0"
     },
-  "require-dev": {
-    "heroku/heroku-buildpack-php": "*"
-  },
   "extra": {
       "webroot-dir": "wp",
       "webroot-package": "wordpress"
