@@ -62,7 +62,7 @@ class CloudFoundryUtil(object):
     @staticmethod
     def init_logging(ctx):
         logFmt = '%(asctime)s [%(levelname)s] %(name)s - %(message)s'
-        if ctx.get('BP_DEBUG', False):
+        if ctx.get('BP_DEBUG', True):
             logging.basicConfig(level=logging.DEBUG, format=logFmt)
         else:
             logLevelStr = ctx.get('BP_LOG_LEVEL', 'INFO')
