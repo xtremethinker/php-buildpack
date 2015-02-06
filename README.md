@@ -57,6 +57,7 @@ While the *30 Second Tutorial* shows how quick and easy it is to get started usi
   - [Releases](#releases)
   - [License](#license)
   - [Contributing](#contributing)
+  - [Tips]
 
 ## Goals
 
@@ -162,6 +163,7 @@ This buildpack facilitates the use of third party code and services with your ap
 [phalcon]:https://github.com/dmikusa-pivotal/cf-ex-phalcon
 [Phalcon]:http://phalconphp.com/en/
 [composer]:https://github.com/dmikusa-pivotal/cf-ex-composer
+[Tips]:https://github.com/cloudfoundry/php-buildpack/blob/master/docs/tips.md
 
 ## Contributing
 
