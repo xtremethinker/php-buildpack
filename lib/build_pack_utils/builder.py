@@ -612,6 +612,7 @@ class StartScriptBuilder(object):
     def __init__(self, builder):
         self.builder = builder
         self.content = []
+        self.preprocess_commands = []
         self._use_pm = False
         self._debug_console = False
         self._log = _log
@@ -636,16 +637,30 @@ class StartScriptBuilder(object):
     def _process_extensions(self):
         def process(cmds):
             for cmd in cmds:
-                self.content.append(' '.join(cmd))
+                self.preprocess_commands.append(' '.join(cmd))
         process_extensions(self.builder._ctx, 'preprocess_commands', process)
+    
+    def _save_profiled_preprocess_commands(self):
+        self._process_extensions()
+
+        profile_d_directory = os.path.join(self.builder._ctx['BUILD_DIR'], '.profile.d')
+        if not os.path.exists(profile_d_directory):
+            os.makedirs(profile_d_directory)
+        envPath = os.path.join(profile_d_directory, 'bp_preprocess_commands.sh')
+
+        with open(envPath, 'at') as envFile:
+            if self.preprocess_commands:
+                envFile.write('\n'.join(self.preprocess_commands))
+        os.chmod(envPath, 0755)
 
     def write(self, wait_forever=False):
         if os.path.exists(os.path.join(self.builder._ctx['BUILD_DIR'],
                                        '.bp', 'lib', 'build_pack_utils')):
             self._log.debug("Setting PYTHONPATH to include build pack utils")
-            self.content.append('export PYTHONPATH=$HOME/.bp/lib')
+            self.preprocess_commands.append('export PYTHONPATH=$HOME/.bp/lib')
 
-        self._process_extensions()
+        self._save_profiled_preprocess_commands()
+
 
         if self._use_pm:
             self._log.debug("Adding process manager to start script")
