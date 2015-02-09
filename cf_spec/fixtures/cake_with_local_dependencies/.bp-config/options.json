@@ -3,5 +3,5 @@
     "WEBDIR": "app/webroot",
     "LIBDIR": "library",
     "PHP_EXTENSIONS": ["pdo", "pdo_pgsql", "mcrypt"],
-    "ADDITIONAL_PREPROCESS_CMDS": [ "app/Console/cake schema create -y"]
+    "ADDITIONAL_PREPROCESS_CMDS": [ "app/Console/cake schema create -y", "echo 'DATABASE'", "echo $DATABASE_URL", "echo 'DATABASE'"]
 }

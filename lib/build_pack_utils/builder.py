@@ -661,7 +661,6 @@ class StartScriptBuilder(object):
 
         self._save_profiled_preprocess_commands()
 
-
         if self._use_pm:
             self._log.debug("Adding process manager to start script")
             self.content.append('$HOME/.bp/bin/start')

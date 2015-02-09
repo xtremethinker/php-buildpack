@@ -6,7 +6,7 @@ describe 'CF PHP Buildpack' do
   let(:browser) { Machete::Browser.new(app) }
 
   after do
-    Machete::CF::DeleteApp.new.execute(app)
+    # Machete::CF::DeleteApp.new.execute(app)
   end
 
   context 'deploying a Cake application with local dependencies', if: Machete::BuildpackMode.offline? do

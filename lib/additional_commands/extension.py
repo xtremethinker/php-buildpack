@@ -18,9 +18,10 @@ def preprocess_commands(ctx):
     preprocs = ctx.get('ADDITIONAL_PREPROCESS_CMDS', [])
     if hasattr(preprocs, 'split'):
         preprocs = [preprocs]
-    cmds = []
+    cmds = [["pushd $HOME"]]
     for cmd in preprocs:
         if hasattr(cmd, 'split'):
             cmd = [cmd]
         cmds.append(cmd)
+    cmds.append(["popd"])
     return cmds
