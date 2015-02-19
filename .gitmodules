@@ -1,0 +1,3 @@
+[submodule "vendor/py-cf-buildpack-utils"]
+	path = vendor/py-cf-buildpack-utils
+	url = https://github.com/dmikusa-pivotal/py-cf-buildpack-utils

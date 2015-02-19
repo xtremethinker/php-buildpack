@@ -339,6 +339,8 @@ def zip_up_files(binPath, zipPath, indexPath):
                       zipfile.ZIP_DEFLATED)
         zip_up_folder(zf, os.path.join(BPDIR, 'scripts'),
                       zipfile.ZIP_DEFLATED)
+        zip_up_folder(zf, os.path.join(BPDIR, 'vendor'),
+                      zipfile.ZIP_DEFLATED)
         # overwrite DOWNLOAD_URL in options.json
         cfg = load_cfg()
         cfg['DOWNLOAD_URL'] = 'file://{BP_DIR}/binaries'
